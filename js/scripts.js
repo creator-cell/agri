@@ -67,12 +67,19 @@ chatPopup.style.overflow = 'hidden';
 
 var myEl = document.getElementById('send');
 $('document').ready(function(){
+  $('#typingGif').hide();
     myEl.addEventListener('click', function() {
-
+      $('#typingGif').show();
+      $("#typingGif").css('background-color:transparent !important');
         //Append to my-message
         $("#chat_messages").append('<div class="message my-message">'+ $("#chat_input").val() +'</div>');
         
-     
+        $("#chatMessage").val($("#chat_input").val());
+        
+        $("#chat_input").val("");
+        $("#chat_messages").append('<div class="message other-message" id ="typingGif" style="background-color:transparent !important;"> ' + 
+        '<img src="assets/img/square.gif" alt="this slowpoke moves"  width="15%" /> '+
+    '</div>');
         var settings = {
             "url": "http://localhost:3000/chat",
             "method": "POST",
@@ -89,7 +96,7 @@ $('document').ready(function(){
                 },
                 {
                   "role": "user",
-                  "content": $("#chat_input").val()
+                  "content": $("#chatMessage").val()
                 }
               ]
             }),
@@ -97,10 +104,12 @@ $('document').ready(function(){
           
           $.ajax(settings).done(function (response) {
             $("#chat_input").val("");
+
             var element = document.getElementById("chat_messages");
             element.scrollTop = element.scrollHeight;
               //Append to other message
               console.log(response.choices[0].message.content);
+              $('#typingGif').remove();
               $("#chat_messages").append('<div class="message other-message">'+ response.choices[0].message.content +'</div>');
             console.log(response);
           });
